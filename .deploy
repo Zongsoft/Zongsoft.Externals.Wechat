@@ -1,0 +1,3 @@
+src/Zongsoft.Externals.Wechat.plugin
+src/Zongsoft.Externals.Wechat.option
+./src/bin/$(Edition)/Zongsoft.Externals.Wechat.*
