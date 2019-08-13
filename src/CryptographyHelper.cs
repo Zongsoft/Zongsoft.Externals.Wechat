@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace Zongsoft.Externals.WeChat
+namespace Zongsoft.Externals.Wechat
 {
 	internal static class CryptographyHelper
 	{
