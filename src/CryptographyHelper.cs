@@ -13,7 +13,7 @@ namespace Zongsoft.Externals.Wechat
 			var iv = new byte[16];
 			Array.Copy(key, iv, 16);
 
-			string nonce = Common.RandomGenerator.GenerateString(16);
+			string nonce = Common.Randomizer.GenerateString(16);
 			byte[] nonceArray = Encoding.UTF8.GetBytes(nonce);
 			byte[] identityArray = Encoding.UTF8.GetBytes(identity);
 			byte[] lengthArray = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(data.Length));
