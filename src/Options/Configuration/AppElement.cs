@@ -32,33 +32,49 @@
  */
 
 using System;
-using System.Web.Http;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+using Zongsoft.Options;
+using Zongsoft.Options.Configuration;
+
+namespace Zongsoft.Externals.Wechat.Options.Configuration
 {
-	public class FallbackController : ApiController
+	public class AppElement : OptionConfigurationElement, IAppSetting
 	{
-		public object Get(string signature, uint timestamp, string nonce)
-		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
+		#region 常量定义
+		private const string XML_ID_ATTRIBUTE = "id";
+		private const string XML_SECRET_ATTRIBUTE = "secret";
+		private const string XML_TOKEN_ATTRIBUTE = "token";
+		private const string XML_KEY_ATTRIBUTE = "key";
+		#endregion
 
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
+		#region 公共属性
+		[OptionConfigurationProperty(XML_ID_ATTRIBUTE, OptionConfigurationPropertyBehavior.IsKey)]
+		public string Id
+		{
+			get => (string)this[XML_ID_ATTRIBUTE];
+			set => this[XML_ID_ATTRIBUTE] = value;
 		}
 
-		private void PrintRequestInfo()
+		[OptionConfigurationProperty(XML_SECRET_ATTRIBUTE, OptionConfigurationPropertyBehavior.IsRequired)]
+		public string Secret
 		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
-			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+			get => (string)this[XML_SECRET_ATTRIBUTE];
+			set => this[XML_SECRET_ATTRIBUTE] = value;
 		}
+
+		[OptionConfigurationProperty(XML_TOKEN_ATTRIBUTE)]
+		public string Token
+		{
+			get => (string)this[XML_TOKEN_ATTRIBUTE];
+			set => this[XML_TOKEN_ATTRIBUTE] = value;
+		}
+
+		[OptionConfigurationProperty(XML_KEY_ATTRIBUTE)]
+		public string Key
+		{
+			get => (string)this[XML_KEY_ATTRIBUTE];
+			set => this[XML_KEY_ATTRIBUTE] = value;
+		}
+		#endregion
 	}
 }

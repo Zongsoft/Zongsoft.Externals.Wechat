@@ -53,13 +53,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ControllerExtension.cs" />
+    <Compile Include="Controllers\CredentialController.cs" />
     <Compile Include="Controllers\FallbackController.cs" />
+    <Compile Include="CredentialProvider.cs" />
     <Compile Include="CryptographyHelper.cs" />
+    <Compile Include="ErrorCodes.cs" />
+    <Compile Include="ErrorMessage.cs" />
+    <Compile Include="ICredentialProvider.cs" />
+    <Compile Include="Options\Configuration\AppElement.cs" />
+    <Compile Include="Options\Configuration\AppElementCollection.cs" />
+    <Compile Include="Options\Configuration\GeneralConfiguration.cs" />
+    <Compile Include="Options\IAppSetting.cs" />
+    <Compile Include="Options\IAppSettingCollection.cs" />
+    <Compile Include="Options\IConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="WechatException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Zongsoft.Externals.Wechat.plugin" />
+    <None Include="Zongsoft.Externals.Wechat.option">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Zongsoft.Externals.Wechat.plugin">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -32,33 +32,61 @@
  */
 
 using System;
-using System.Web.Http;
+using System.Runtime.Serialization;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+namespace Zongsoft.Externals.Wechat
 {
-	public class FallbackController : ApiController
+	public class WechatException : ApplicationException
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		#region 构造函数
+		public WechatException(string message) : base(message)
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
-
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
 		}
 
-		private void PrintRequestInfo()
+		public WechatException(string message, Exception innerException) : base(message, innerException)
 		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
-			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
 		}
+
+		public WechatException(int code, string message) : base(message)
+		{
+			this.Code = code;
+		}
+
+		public WechatException(int code, string message, Exception innerException) : base(message, innerException)
+		{
+			this.Code = code;
+		}
+
+		protected WechatException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			this.Code = info.GetInt32(nameof(this.Code));
+		}
+		#endregion
+
+		#region 公共属性
+		public int Code
+		{
+			get;
+		}
+		#endregion
+
+		#region 重写方法
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			//添加序列化成员
+			info.AddValue(nameof(this.Code), this.Code);
+
+			//调用基类同名方法
+			base.GetObjectData(info, context);
+		}
+
+		public override string ToString()
+		{
+			if(this.Code == 0)
+				return base.ToString();
+			else
+				return $"[{this.Code.ToString()}] " + base.ToString();
+		}
+		#endregion
 	}
 }

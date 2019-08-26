@@ -32,33 +32,38 @@
  */
 
 using System;
-using System.Web.Http;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+using Zongsoft.Options;
+using Zongsoft.Options.Configuration;
+
+namespace Zongsoft.Externals.Wechat.Options.Configuration
 {
-	public class FallbackController : ApiController
+	public class GeneralConfiguration : OptionConfigurationElement, IConfiguration
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		#region 常量定义
+		private const string XML_APPS_COLLECTION = "apps";
+		#endregion
+
+		#region 公共属性
+		[OptionConfigurationProperty(XML_APPS_COLLECTION)]
+		public AppElementCollection Apps
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
-
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
-		}
-
-		private void PrintRequestInfo()
-		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
+			get
 			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
+				return (AppElementCollection)this[XML_APPS_COLLECTION];
 			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
 		}
+		#endregion
+
+		#region 显式实现
+		IAppSettingCollection IConfiguration.Apps
+		{
+			get
+			{
+				return this.Apps;
+			}
+		}
+		#endregion
+
 	}
 }

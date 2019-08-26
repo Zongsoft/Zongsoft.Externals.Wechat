@@ -32,33 +32,37 @@
  */
 
 using System;
-using System.Web.Http;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+namespace Zongsoft.Externals.Wechat
 {
-	public class FallbackController : ApiController
+	internal static class Utility
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		public static bool TryGetJson<T>(this HttpResponseMessage response, out T data)
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
+			data = default(T);
 
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
-		}
+			if(response == null)
+				return false;
 
-		private void PrintRequestInfo()
-		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
+			if(string.Equals(response.Content.Headers.ContentType.MediaType, "application/json", StringComparison.OrdinalIgnoreCase) ||
+			   string.Equals(response.Content.Headers.ContentType.MediaType, "text/json", StringComparison.OrdinalIgnoreCase))
 			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
+				var content = response.Content.ReadAsStringAsync()
+				                      .ConfigureAwait(false)
+									  .GetAwaiter()
+									  .GetResult();
+
+				if(content != null && content.Length > 0)
+				{
+					data = Zongsoft.Runtime.Serialization.Serializer.Json.Deserialize<T>(content);
+					return true;
+				}
 			}
 
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+			return false;
 		}
 	}
 }

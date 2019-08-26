@@ -33,32 +33,30 @@
 
 using System;
 using System.Web.Http;
+using System.Threading.Tasks;
 
 namespace Zongsoft.Externals.Wechat.Controllers
 {
-	public class FallbackController : ApiController
+	public class CredentialController : ApiController
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		#region 成员字段
+		private ICredentialProvider _provider;
+		#endregion
+
+		#region 公共属性
+		public ICredentialProvider Provider
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
-
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
+			get => _provider;
+			set => _provider = value ?? throw new ArgumentNullException();
 		}
+		#endregion
 
-		private void PrintRequestInfo()
+		#region 公共方法
+		[HttpGet]
+		public async Task<object> Get(string id)
 		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
-			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+			return this.Text(await _provider.GetCredentialAsync(id));
 		}
+		#endregion
 	}
 }

@@ -32,33 +32,24 @@
  */
 
 using System;
-using System.Web.Http;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+namespace Zongsoft.Externals.Wechat
 {
-	public class FallbackController : ApiController
+	/// <summary>
+	/// 提供了微信平台全局错误码的定义。
+	/// </summary>
+	public static class ErrorCodes
 	{
-		public object Get(string signature, uint timestamp, string nonce)
-		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
+		/// <summary>成功。</summary>
+		public static readonly int Succeed = 0;
 
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
-		}
+		/// <summary>系统繁忙，稍后重试。</summary>
+		public static readonly int Busy = -1;
 
-		private void PrintRequestInfo()
-		{
-			var text = new System.Text.StringBuilder();
+		/// <summary>无效的AppSecret。</summary>
+		public static readonly int InvalidSecret = 40001;
 
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
-			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
-		}
+		/// <summary>调用接口的IP地址不在白名单中，请在接口IP白名单中进行设置。</summary>
+		public static readonly int NotInWhiteList = 40164;
 	}
 }

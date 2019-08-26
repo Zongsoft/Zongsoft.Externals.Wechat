@@ -32,33 +32,19 @@
  */
 
 using System;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace Zongsoft.Externals.Wechat.Controllers
 {
-	public class FallbackController : ApiController
+	public static class ControllerExtension
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		public static HttpResponseMessage Text(this ApiController controller, string text, System.Text.Encoding encoding = null)
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
-
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
-		}
-
-		private void PrintRequestInfo()
-		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
+			return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
 			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+				Content = new StringContent(text, encoding ?? System.Text.Encoding.UTF8, "text/plain")
+			};
 		}
 	}
 }

@@ -32,33 +32,41 @@
  */
 
 using System;
-using System.Web.Http;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+namespace Zongsoft.Externals.Wechat
 {
-	public class FallbackController : ApiController
+	/// <summary>
+	/// 表示微信平台API返回的错误消息的结构。
+	/// </summary>
+	public struct ErrorMessage
 	{
-		public object Get(string signature, uint timestamp, string nonce)
+		#region 公共字段
+		/// <summary>
+		/// 错误码。
+		/// </summary>
+		[Zongsoft.Runtime.Serialization.SerializationMember("errcode")]
+		public int Code;
+
+		/// <summary>
+		/// 错误消息。
+		/// </summary>
+		[Zongsoft.Runtime.Serialization.SerializationMember("errmsg")]
+		public string Message;
+		#endregion
+
+		#region 构造函数
+		public ErrorMessage(int code, string message)
 		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
-
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
+			this.Code = code;
+			this.Message = message;
 		}
+		#endregion
 
-		private void PrintRequestInfo()
+		#region 重写方法
+		public override string ToString()
 		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
-			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
-
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+			return "[" + this.Code.ToString() + "] " + this.Message;
 		}
+		#endregion
 	}
 }

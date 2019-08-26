@@ -32,33 +32,57 @@
  */
 
 using System;
-using System.Web.Http;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+using Zongsoft.Options;
+using Zongsoft.Options.Configuration;
+
+namespace Zongsoft.Externals.Wechat.Options.Configuration
 {
-	public class FallbackController : ApiController
+	public class AppElementCollection : OptionConfigurationElementCollection<AppElement, IAppSetting>, IAppSettingCollection
 	{
-		public object Get(string signature, uint timestamp, string nonce)
-		{
-			if(Zongsoft.Common.UriExtension.TryGetQueryString(this.Request.RequestUri, "echostr", out var result))
-				return this.Text(result);
+		#region 常量定义
+		private const string XML_DEFAULT_ATTRIBUTE = "default";
+		#endregion
 
-			return new System.Web.Http.Results.StatusCodeResult(System.Net.HttpStatusCode.NoContent, this);
+		#region 构造函数
+		public AppElementCollection() : base("app")
+		{
+			this.Properties.Add(new OptionConfigurationProperty(XML_DEFAULT_ATTRIBUTE, typeof(string)));
 		}
+		#endregion
 
-		private void PrintRequestInfo()
+		#region 公共属性
+		public IAppSetting Default
 		{
-			var text = new System.Text.StringBuilder();
-
-			text.Append("(" + this.Request.Method.Method + ")");
-			text.AppendLine(this.Request.RequestUri.ToString());
-
-			foreach(var header in this.Request.Headers)
+			get
 			{
-				text.AppendLine(header.Key + ":" + string.Join(";", header.Value));
-			}
+				var id = this.GetAttributeValue(XML_DEFAULT_ATTRIBUTE) as string;
 
-			Zongsoft.Diagnostics.Logger.Error(text.ToString());
+				if(string.IsNullOrWhiteSpace(id))
+					return null;
+
+				return this[id];
+			}
+			set
+			{
+				if(value == null)
+					this.SetAttributeValue(XML_DEFAULT_ATTRIBUTE, null);
+				else
+					this.SetAttributeValue(XML_DEFAULT_ATTRIBUTE, value.Id);
+			}
 		}
+		#endregion
+
+		#region 重写方法
+		protected override OptionConfigurationElement CreateNewElement()
+		{
+			return new AppElement();
+		}
+
+		protected override string GetElementKey(OptionConfigurationElement element)
+		{
+			return ((AppElement)element).Id;
+		}
+		#endregion
 	}
 }
