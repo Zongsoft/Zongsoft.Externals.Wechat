@@ -182,37 +182,18 @@ namespace Zongsoft.Externals.Wechat
 			{
 				public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 				{
-					return sourceType == typeof(int);
-				}
-
-				public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-				{
-					return base.CanConvertTo(context, destinationType);
+					return Zongsoft.Common.TypeExtension.IsInteger(sourceType);
 				}
 
 				public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 				{
-					if(value != null && value is int number)
+					if(Zongsoft.Common.Convert.TryConvertValue<int>(value, out var number))
 						return DateTime.UtcNow.AddSeconds(number);
 
 					return base.ConvertFrom(context, culture, value);
 				}
-
-				public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-				{
-					return base.ConvertTo(context, culture, value, destinationType);
-				}
 			}
 			#endregion
-		}
-
-		private struct CredentialTokenMessage
-		{
-			[Zongsoft.Runtime.Serialization.SerializationMember("access_token")]
-			public string AccessToken;
-
-			[Zongsoft.Runtime.Serialization.SerializationMember("expires_in")]
-			public int Expires;
 		}
 		#endregion
 	}
