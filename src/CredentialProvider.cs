@@ -193,10 +193,12 @@ namespace Zongsoft.Externals.Wechat
 		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 		private Options.IAppSetting GetApp(string appId)
 		{
-			if(string.IsNullOrEmpty(appId))
-				return this.Configuration.Apps.Default ?? throw new InvalidOperationException("Missing The Wechat application default configuration.");
+			var configuration = this.Configuration ?? throw new WechatException("Missing required configuration for the Wechat credential provider.");
 
-			if(this.Configuration.Apps.TryGet(appId, out var app))
+			if(string.IsNullOrEmpty(appId))
+				return configuration.Apps.Default ?? throw new InvalidOperationException("Missing The Wechat application default configuration.");
+
+			if(configuration.Apps.TryGet(appId, out var app))
 				return app;
 
 			throw new InvalidOperationException($"The specified '{appId}' Wechat application configuration does not exist.");
