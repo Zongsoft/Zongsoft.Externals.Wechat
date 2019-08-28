@@ -60,6 +60,7 @@
     <Compile Include="CryptographyHelper.cs" />
     <Compile Include="ErrorCodes.cs" />
     <Compile Include="ErrorMessage.cs" />
+    <Compile Include="ExpiryConverter.cs" />
     <Compile Include="ICredentialProvider.cs" />
     <Compile Include="Options\Configuration\AppElement.cs" />
     <Compile Include="Options\Configuration\AppElementCollection.cs" />

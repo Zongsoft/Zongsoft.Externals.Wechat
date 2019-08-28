@@ -32,38 +32,24 @@
  */
 
 using System;
-using System.Web.Http;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.ComponentModel;
 
-namespace Zongsoft.Externals.Wechat.Controllers
+namespace Zongsoft.Externals.Wechat
 {
-	public class CredentialController : ApiController
+	public class ExpiryConverter : TypeConverter
 	{
-		#region 成员字段
-		private ICredentialProvider _provider;
-		#endregion
-
-		#region 公共属性
-		public ICredentialProvider Provider
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
-			get => _provider;
-			set => _provider = value ?? throw new ArgumentNullException();
-		}
-		#endregion
-
-		#region 公共方法
-		[HttpGet]
-		public async Task<object> Get(string id)
-		{
-			return this.Text(await _provider.GetCredentialAsync(id));
+			return Zongsoft.Common.TypeExtension.IsNumeric(sourceType);
 		}
 
-		[HttpGet]
-		[ActionName("Ticket")]
-		public async Task<object> GetTicket(string id)
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			return this.Text(await _provider.GetTicketAsync(id));
+			if(Zongsoft.Common.Convert.TryConvertValue<int>(value, out var number))
+				return DateTime.UtcNow.AddSeconds(number);
+
+			return base.ConvertFrom(context, culture, value);
 		}
-		#endregion
 	}
 }

@@ -52,8 +52,8 @@ namespace Zongsoft.Externals.Wechat
 			{
 				var content = response.Content.ReadAsStringAsync()
 				                      .ConfigureAwait(false)
-									  .GetAwaiter()
-									  .GetResult();
+				                      .GetAwaiter()
+				                      .GetResult();
 
 				if(content != null && content.Length > 0)
 				{
