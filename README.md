@@ -7,3 +7,7 @@ README: [English](https://github.com/Zongsoft/Zongsoft.Externals.Wechat/blob/mas
 -----
 
 [**Zongsoft.Externals.Wechat**](https://github.com/Zongsoft/Zongsoft.Externals.Wechat)是一个微信开放平台的SDK的扩展库。
+
+-----
+
+该项目已归档，对应的替换项目位于：[https://github.com/Zongsoft/Framework/externals/wechat](https://github.com/Zongsoft/Framework/blob/master/externals/wechat)
